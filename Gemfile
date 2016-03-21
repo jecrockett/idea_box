@@ -12,6 +12,8 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 group :development, :test do
   gem 'rspec-rails'
   gem 'pry-byebug'
+  gem 'capybara'
+  gem 'launchy'
 end
 
 group :development do
