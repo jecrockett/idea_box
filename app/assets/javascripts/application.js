@@ -34,13 +34,15 @@ $(document).ready(function(){
 
   var renderIdea = function(idea){
     $('#ideas-container').append(
-      "<div class='idea'><span class='title'>" +
+      "<div id='idea-" +
+      idea.id +
+      "' class='idea'><p class='title'>" +
       idea.title +
-      "</span><p class='body'>" +
+      "</p><p class='body'>" +
       idea.body +
-      "</p><span class='quality'>" +
+      "</p><p class='quality'>" +
       idea.quality +
-      "</span></div>"
+      "</p></div>"
     );
   };
 
