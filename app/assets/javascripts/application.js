@@ -16,6 +16,10 @@
 
 $(document).ready(function(){
 
+  //$.getJSON('/ideas').then(function(){
+
+  // });
+
   var renderIdeas = function(){
     $.ajax({
       type: 'GET',
@@ -43,7 +47,10 @@ $(document).ready(function(){
       idea.quality_in_words +
       "</span><p class='body'>Body: " +
       idea.truncated_body +
-      "</p></div><div class='actions'><a href='#' id='" + idea.id + "' class='delete'>Delete</a></div></div>"
+      "</p></div><div class='actions'>" +
+      "<a href='#' id='increase-quality'>Increase</a>" +
+      "<a href='#' id='decrease-quality'>Decrease</a>" +
+      "<a href='#' id='" + idea.id + "' class='delete'>Delete</a></div></div>"
     );
   };
 
@@ -78,7 +85,7 @@ $(document).ready(function(){
 
     $.ajax({
       type: 'DELETE',
-      url: 'api/v1/ideas/' + id,
+      url: '/api/v1/ideas/' + id,
       success: function(response){
         console.log("Idea deleted.");
       },
@@ -87,5 +94,7 @@ $(document).ready(function(){
       }
     })
   });
+
+
 
 });
