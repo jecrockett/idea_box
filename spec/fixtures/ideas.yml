@@ -1,0 +1,31 @@
+first:
+  id: 1
+  title: Candy Sneakers
+  body: Shoes you can eat.
+  quality: 1
+  created_at: 2016-03-20 20:47:19
+  updated_at: 2016-03-20 20:47:19
+
+second:
+  id: 2
+  title: Flash puppy mobs
+  body: Randomly show up places with ten puppies and a small encosed fence thing.
+  quality: 2
+  created_at: 2016-03-21 20:47:19
+  updated_at: 2016-03-21 20:47:19
+
+third:
+  id: 3
+  title: Guerrilla Glitter Bombs
+  body: Creatively delivered glitter bombs. Like when someone turns on their car air conditioning, or flushes one of the Turing basement toilets, or turns on their shower, or puts on a hoodie, or opens their fridge, or any number of ideas. Is this over 100 characters yet? Hope so.
+  quality: 3
+  created_at: 2016-03-19 20:47:19
+  updated_at: 2016-03-19 20:47:19
+
+fourth:
+  id: 4
+  title: Dog translator
+  body: Help humans and dogs to communicate seamlessly.
+  quality: 3
+  created_at: 2016-03-18 20:47:19
+  updated_at: 2016-03-18 20:47:19

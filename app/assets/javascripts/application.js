@@ -13,3 +13,37 @@
 //= require jquery
 //= require jquery_ujs
 //= require_tree .
+
+$(document).ready(function(){
+
+  // on load, hit the ideas api to pull ideas
+  $.ajax({
+    type: 'GET',
+    url: '/api/v1/ideas',
+    success: function(response){
+      console.log("Fetched ideas.");
+
+      $.each(response, function(index, idea){
+        renderIdea(idea);
+      });
+    },
+    error: function(xhr){
+      console.log(xhr.responseText);
+    }
+  });
+
+  var renderIdea = function(idea){
+    $('#ideas-container').append(
+      "<div id='idea-" +
+      idea.id +
+      "' class='idea'><p class='title'>Title: " +
+      idea.title +
+      "</p><p class='body'>Body: " +
+      idea.body +
+      "</p><p class='quality'>Quality: " +
+      idea.quality +
+      "</p></div>"
+    );
+  };
+
+});
