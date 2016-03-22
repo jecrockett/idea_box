@@ -36,11 +36,11 @@ $(document).ready(function(){
     $('#ideas-container').append(
       "<div id='idea-" +
       idea.id +
-      "' class='idea'><p class='title'>" +
+      "' class='idea'><p class='title'>Title: " +
       idea.title +
-      "</p><p class='body'>" +
+      "</p><p class='body'>Body: " +
       idea.body +
-      "</p><p class='quality'>" +
+      "</p><p class='quality'>Quality: " +
       idea.quality +
       "</p></div>"
     );
