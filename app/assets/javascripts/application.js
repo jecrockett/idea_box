@@ -218,6 +218,7 @@ $(document).ready(function(){
         },
         success: function(response){
           console.log('Body updated.');
+          // update the hidden element with the new body
           element.html('Body: ' + newBody);
         },
         error: function(xhr) {
