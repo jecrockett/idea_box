@@ -16,13 +16,11 @@
 
 $(document).ready(function(){
 
-  // on load, hit the ideas api to pull ideas
   $.ajax({
     type: 'GET',
     url: '/api/v1/ideas',
     success: function(response){
       console.log("Fetched ideas.");
-
       $.each(response, function(index, idea){
         renderIdea(idea);
       });
@@ -39,9 +37,9 @@ $(document).ready(function(){
       "' class='idea'><p class='title'>Title: " +
       idea.title +
       "</p><p class='body'>Body: " +
-      idea.body +
+      idea.truncated_body +
       "</p><p class='quality'>Quality: " +
-      idea.quality +
+      idea.quality_in_words +
       "</p></div>"
     );
   };

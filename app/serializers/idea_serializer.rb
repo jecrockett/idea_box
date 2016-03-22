@@ -1,9 +1,16 @@
 class IdeaSerializer < ActiveModel::Serializer
-  attributes :id, :title, :body, :quality_in_words
+  attributes :id, :title, :truncated_body, :quality_in_words
 
   def quality_in_words
-    "Swill" if object.quality == 1
-    "Plausible" if object.quality == 2
-    "Genius" if object.quality == 3
+    case object.quality
+    when 1 then "Swill"
+    when 2 then "Plausible"
+    when 3 then "Genius"
+    end
   end
+
+  def truncated_body
+    object.body.truncate(100, separator: ' ')
+  end
+
 end
