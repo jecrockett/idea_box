@@ -7,10 +7,13 @@ class Api::V1::IdeasController < Api::ApiController
   end
 
   def create
-    idea = Idea.new(idea_params)
-    if idea.save
-      respond_with(Idea.new(idea_params), location: api_v1_ideas_path)
-    end
+    idea = Idea.create(idea_params)
+    respond_with(idea, location: api_v1_ideas_path)
+  end
+
+  def destroy
+    idea = Idea.find(params[:id])
+    respond_with idea.delete
   end
 
   private
