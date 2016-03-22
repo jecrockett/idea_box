@@ -187,6 +187,8 @@ $(document).ready(function(){
       // re-show the hidden element
       element.show();
     })
+    // allow user to enable blur by hitting return key
+    form.keydown(function(e) { if (e.which == 13) { form.blur(); }});
   });
 
   $('#ideas-container').on('click', 'p.body', function(e){
@@ -227,6 +229,8 @@ $(document).ready(function(){
       // re-show the hidden element
       element.show();
     })
+    // allow user to enable blur by hitting return key
+    form.keydown(function(e) { if (e.which == 13) { form.blur(); }});
   });
 
 
