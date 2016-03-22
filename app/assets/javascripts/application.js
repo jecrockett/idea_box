@@ -80,7 +80,7 @@ $(document).ready(function(){
   });
 
   $('#ideas-container').on('click', 'a.delete', function(e){
-    var id = this.id;
+    var id = $(this).closest('.idea').attr('id').replace('idea-', '');
     $(this).parents().eq(1).hide();
 
     $.ajax({
@@ -91,6 +91,33 @@ $(document).ready(function(){
       },
       error: function(xhr) {
         console.log(xhr.responseText);
+      }
+    })
+  });
+
+
+  $('#ideas-container').on('click', 'a#increase-quality', function(e){
+    var idea = $(this).closest('.idea');
+    var id = idea.attr('id').replace('idea-', '');
+    var oldQualityWord = idea.find('.quality').text().replace('Quality: ', '');
+    var increasedQualityKey = { Genius: 3, Plausible: 3, Swill: 2 }
+    var qualityKey = { 3: 'Genius', 2: 'Plausible', 1: 'Swill' }
+    var newQualityWord = qualityKey[increasedQualityKey[oldQualityWord]]
+
+    $.ajax({
+      type: 'PUT',
+      url: '/api/v1/ideas/' + id,
+      data: {
+        idea: {
+          quality: increasedQualityKey[oldQualityWord]
+        }
+      },
+      success: function(response) {
+        console.log('Quality updated.')
+        idea.find('.quality').html("Quality: " + newQualityWord);
+      },
+      error: function(xhr) {
+        console.log(xhr.responseText)
       }
     })
   });

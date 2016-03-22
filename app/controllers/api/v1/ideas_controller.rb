@@ -11,6 +11,13 @@ class Api::V1::IdeasController < Api::ApiController
     respond_with(idea, location: api_v1_ideas_path)
   end
 
+  def update
+    idea = Idea.find(params[:id])
+    idea.update_attributes(idea_params)
+    respond_with idea
+
+  end
+
   def destroy
     idea = Idea.find(params[:id])
     respond_with idea.delete
@@ -19,6 +26,6 @@ class Api::V1::IdeasController < Api::ApiController
   private
 
     def idea_params
-      params.require(:idea).permit(:title, :body)
+      params.require(:idea).permit(:title, :body, :quality)
     end
 end
