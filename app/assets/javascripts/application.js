@@ -31,7 +31,7 @@ $(document).ready(function(){
   });
 
   var renderIdea = function(idea){
-    $('#ideas-container').append(
+    $('#ideas-container').prepend(
       "<div id='idea-" +
       idea.id +
       "' class='idea'><p class='title'>Title: " +
@@ -43,5 +43,35 @@ $(document).ready(function(){
       "</p></div>"
     );
   };
+
+  $('#save-idea-btn').click(function(){
+    // grab the value in the title field
+    var title = $('#new-idea-title').val();
+    // grab the value in the body field
+    var body = $('#new-idea-body').val();
+    // clear the title field
+    $('#new-idea-title').val('');
+    // clear the body field
+    $('#new-idea-body').val('');
+    // send ajax request to create idea
+    $.ajax({
+      type: 'POST',
+      url: '/api/v1/ideas',
+      data: {
+        idea: {
+          title: title,
+          body: body
+        }
+      },
+      // on success, append that idea info to the page
+      success: function(response){
+        console.log("Idea created.");
+        renderIdea(response);
+      },
+      error: function(xhr){
+        console.log(xhr.responseText)
+      }
+    })
+  });
 
 });
