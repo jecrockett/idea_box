@@ -41,11 +41,11 @@ $(document).ready(function(){
   var renderIdea = function(idea){
     $('#ideas-container').prepend(
       "<div id='idea-" + idea.id + "' class='idea'>" +
-      "<div class='contents'><span class='title'>Title: " +
+      "<div class='contents'><p class='title'>Title: " +
       idea.title +
-      "</span><span class='quality'>Quality: " +
+      "</p><p class='quality'>Quality: " +
       idea.quality_in_words +
-      "</span><p class='body'>Body: " +
+      "</p><p class='body'>Body: " +
       idea.truncated_body +
       "</p></div><div class='actions'>" +
       "<a href='#' id='increase-quality'>Increase</a>" +
@@ -145,6 +145,87 @@ $(document).ready(function(){
       error: function(xhr) {
         console.log(xhr.responseText)
       }
+    })
+  });
+
+  $('#ideas-container').on('click', 'p.title', function(e){
+    // save the clicked element
+    var element = $(this);
+    // save which idea is being updated...necessary or not?
+    var idea = element.closest('.idea')
+    var id = idea.attr('id').replace('idea-', '');
+    // save the clicked element's contents
+    var ideaTitle = element.text().replace('Title: ', '');
+    // save the temporary input to a variable
+    var form = $("<input name='temp' type='text' value='" + ideaTitle + "'/>")
+    // hide the clicked element and insert input field after with element value
+    element.hide().after(form);
+    // focus automatically on that input field
+    form.focus();
+    // when the focus comes off it, save the value
+    form.blur(function(){
+      var newTitle = $(this).val();
+      // send ajax update with new value
+      $.ajax({
+        type: 'PUT',
+        url: 'api/v1/ideas/' + id,
+        data: {
+          idea: {
+            title: newTitle
+          }
+        },
+        success: function(response){
+          console.log('Title updated.');
+          element.html('Title: ' + newTitle);
+        },
+        error: function(xhr) {
+          console.log(xhr.responseText);
+        }
+      })
+      // get ride of the input field
+      $(this).remove();
+      // re-show the hidden element
+      element.show();
+    })
+  });
+
+  $('#ideas-container').on('click', 'p.body', function(e){
+    // save the clicked element
+    var element = $(this);
+    // save which idea is being updated...necessary or not?
+    var id = element.closest('.idea').attr('id').replace('idea-', '');
+    // save the clicked element's contents
+    var ideaBody = element.text().replace('Body: ', '');
+    // save the temporary input to a variable
+    var form = $("<input name='temp' type='text' value='" + ideaBody + "'/>")
+    // hide the clicked element and insert input field after with element value
+    element.hide().after(form);
+    // focus automatically on that input field
+    form.focus();
+    // when the focus comes off it, save the value
+    form.blur(function(){
+      var newBody = $(this).val();
+      // send ajax update with new value
+      $.ajax({
+        type: 'PUT',
+        url: 'api/v1/ideas/' + id,
+        data: {
+          idea: {
+            body: newBody
+          }
+        },
+        success: function(response){
+          console.log('Body updated.');
+          element.html('Body: ' + newBody);
+        },
+        error: function(xhr) {
+          console.log(xhr.responseText);
+        }
+      })
+      // get ride of the input field
+      $(this).remove();
+      // re-show the hidden element
+      element.show();
     })
   });
 
