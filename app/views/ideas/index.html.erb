@@ -1,4 +1,14 @@
 <h1>Ideas</h1>
 
+<div id="idea-form">
+  <%= label_tag :title, "Title:" %>
+  <%= text_field_tag :title, nil, id:"new-idea-title" %>
+
+  <%= label_tag :body, "Body:" %>
+  <%= text_field_tag :body, nil, id:"new-idea-body" %>
+  
+  <%= submit_tag "Save", id:"save-idea-btn" %>
+</div>
+
 <div id="ideas-container">
 </div>
