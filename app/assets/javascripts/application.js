@@ -16,6 +16,10 @@
 
 $(document).ready(function(){
 
+  //$.getJSON('/ideas').then(function(){
+
+  // });
+
   var renderIdeas = function(){
     $.ajax({
       type: 'GET',
@@ -43,7 +47,10 @@ $(document).ready(function(){
       idea.quality_in_words +
       "</span><p class='body'>Body: " +
       idea.truncated_body +
-      "</p></div><div class='actions'><a href='#' id='" + idea.id + "' class='delete'>Delete</a></div></div>"
+      "</p></div><div class='actions'>" +
+      "<a href='#' id='increase-quality'>Increase</a>" +
+      "<a href='#' id='decrease-quality'>Decrease</a>" +
+      "<a href='#' id='" + idea.id + "' class='delete'>Delete</a></div></div>"
     );
   };
 
@@ -73,12 +80,12 @@ $(document).ready(function(){
   });
 
   $('#ideas-container').on('click', 'a.delete', function(e){
-    var id = this.id;
+    var id = $(this).closest('.idea').attr('id').replace('idea-', '');
     $(this).parents().eq(1).hide();
 
     $.ajax({
       type: 'DELETE',
-      url: 'api/v1/ideas/' + id,
+      url: '/api/v1/ideas/' + id,
       success: function(response){
         console.log("Idea deleted.");
       },
@@ -87,5 +94,59 @@ $(document).ready(function(){
       }
     })
   });
+
+
+  $('#ideas-container').on('click', 'a#increase-quality', function(e){
+    var idea = $(this).closest('.idea');
+    var id = idea.attr('id').replace('idea-', '');
+    var oldQualityWord = idea.find('.quality').text().replace('Quality: ', '');
+    var increasedQualityKey = { Genius: 3, Plausible: 3, Swill: 2 }
+    var qualityKey = { 3: 'Genius', 2: 'Plausible', 1: 'Swill' }
+    var newQualityWord = qualityKey[increasedQualityKey[oldQualityWord]]
+
+    $.ajax({
+      type: 'PUT',
+      url: '/api/v1/ideas/' + id,
+      data: {
+        idea: {
+          quality: increasedQualityKey[oldQualityWord]
+        }
+      },
+      success: function(response) {
+        console.log('Quality updated.')
+        idea.find('.quality').html("Quality: " + newQualityWord);
+      },
+      error: function(xhr) {
+        console.log(xhr.responseText)
+      }
+    })
+  });
+
+  $('#ideas-container').on('click', 'a#decrease-quality', function(e){
+    var idea = $(this).closest('.idea');
+    var id = idea.attr('id').replace('idea-', '');
+    var oldQualityWord = idea.find('.quality').text().replace('Quality: ', '');
+    var decreasedQualityKey = { Genius: 2, Plausible: 1, Swill: 1 }
+    var qualityKey = { 3: 'Genius', 2: 'Plausible', 1: 'Swill' }
+    var newQualityWord = qualityKey[decreasedQualityKey[oldQualityWord]]
+
+    $.ajax({
+      type: 'PUT',
+      url: '/api/v1/ideas/' + id,
+      data: {
+        idea: {
+          quality: decreasedQualityKey[oldQualityWord]
+        }
+      },
+      success: function(response) {
+        console.log('Quality updated.')
+        idea.find('.quality').html("Quality: " + newQualityWord);
+      },
+      error: function(xhr) {
+        console.log(xhr.responseText)
+      }
+    })
+  });
+
 
 });
