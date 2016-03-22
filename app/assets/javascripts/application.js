@@ -122,6 +122,31 @@ $(document).ready(function(){
     })
   });
 
+  $('#ideas-container').on('click', 'a#decrease-quality', function(e){
+    var idea = $(this).closest('.idea');
+    var id = idea.attr('id').replace('idea-', '');
+    var oldQualityWord = idea.find('.quality').text().replace('Quality: ', '');
+    var decreasedQualityKey = { Genius: 2, Plausible: 1, Swill: 1 }
+    var qualityKey = { 3: 'Genius', 2: 'Plausible', 1: 'Swill' }
+    var newQualityWord = qualityKey[decreasedQualityKey[oldQualityWord]]
+
+    $.ajax({
+      type: 'PUT',
+      url: '/api/v1/ideas/' + id,
+      data: {
+        idea: {
+          quality: decreasedQualityKey[oldQualityWord]
+        }
+      },
+      success: function(response) {
+        console.log('Quality updated.')
+        idea.find('.quality').html("Quality: " + newQualityWord);
+      },
+      error: function(xhr) {
+        console.log(xhr.responseText)
+      }
+    })
+  });
 
 
 });
