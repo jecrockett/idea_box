@@ -218,6 +218,7 @@ $(document).ready(function(){
         },
         success: function(response){
           console.log('Body updated.');
+          // update the hidden element with the new body
           element.html('Body: ' + newBody);
         },
         error: function(xhr) {
@@ -233,5 +234,16 @@ $(document).ready(function(){
     form.keydown(function(e) { if (e.which == 13) { form.blur(); }});
   });
 
+  $('#search-form').keyup(function(e){
+    var searchTerm = $(this).val().toLowerCase();
+    var $ideas = $('.idea')
+    $ideas.show();
+    for (var i = 0; i < $ideas.length; i++) {
+      var ideaText = $($ideas[i]).find('p.title, p.body').text().replace('Title: ', '').replace('Body:', '').toLowerCase();
+      if (ideaText.indexOf(searchTerm) === -1) {
+        $($ideas[i]).hide();
+      }
+    }
+  })
 
 });

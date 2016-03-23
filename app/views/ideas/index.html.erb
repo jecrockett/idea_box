@@ -1,12 +1,17 @@
 <h1>Ideas</h1>
 
+<div id="search-container">
+  <%= text_field_tag :search, nil, placeholder: 'Filter by search...', id:'search-form' %>
+</div>
+
 <div id="idea-form">
+  <h5>Add a new idea:</h5>
   <%= label_tag :title, "Title:" %>
   <%= text_field_tag :title, nil, id:"new-idea-title" %>
 
   <%= label_tag :body, "Body:" %>
   <%= text_field_tag :body, nil, id:"new-idea-body" %>
-  
+
   <%= submit_tag "Save", id:"save-idea-btn" %>
 </div>
 
