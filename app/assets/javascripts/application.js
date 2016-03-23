@@ -234,7 +234,7 @@ $(document).ready(function(){
     form.keydown(function(e) { if (e.which == 13) { form.blur(); }});
   });
 
-  $('#search-form').keyup(function(e){
+  $('#search-form').on('change, keyup', function(e){
     var searchTerm = $(this).val().toLowerCase();
     var $ideas = $('.idea')
     $ideas.show();
