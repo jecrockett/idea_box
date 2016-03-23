@@ -246,4 +246,32 @@ $(document).ready(function(){
     }
   })
 
+  $('#quality-filter').click(function(){
+    var $ideas = $('.idea')
+    var $first_idea = $($ideas[0])
+
+    if (!$first_idea.hasClass('sorted')) {
+      $ideas.sort(function(a, b){
+        var first =  $(a).find('p.quality').text().replace('Quality: ', '');
+        var second = $(b).find('p.quality').text().replace('Quality: ', '');
+        var qualityKey = {"Genius":    3,
+                          "Plausible": 2,
+                          "Swill":     1}
+        return qualityKey[second] - qualityKey[first];
+      });
+
+      $ideas.each(function(index, idea){
+        $(idea).addClass('sorted');
+      });
+    } else {
+
+      $ideas = $ideas.toArray().reverse()
+    };
+
+    $('#ideas-container').empty();
+    $($ideas).each(function(index, idea){
+      $('#ideas-container').append(idea)
+    });
+  });
+
 });
