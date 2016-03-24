@@ -83,44 +83,6 @@ $(document).ready(function(){
     })
   }
 
-  function increaseQuality(id, idea, newNum, newWord){
-    $.ajax({
-      type: 'PUT',
-      url: '/api/v1/ideas/' + id,
-      data: {
-        idea: {
-          quality: newNum
-        }
-      },
-      success: function(response) {
-        console.log('Quality updated.')
-        idea.find('.quality').html("Quality: " + newWord);
-      },
-      error: function(xhr) {
-        console.log(xhr.responseText)
-      }
-    })
-  };
-
-  function decreaseQuality(id, idea, newNum, newWord){
-    $.ajax({
-      type: 'PUT',
-      url: '/api/v1/ideas/' + id,
-      data: {
-        idea: {
-          quality: newNum
-        }
-      },
-      success: function(response) {
-        console.log('Quality updated.')
-        idea.find('.quality').html("Quality: " + newWord);
-      },
-      error: function(xhr) {
-        console.log(xhr.responseText)
-      }
-    })
-  }
-
   function updateQuality(id, idea, newNum, newWord){
     $.ajax({
       type: 'PUT',
