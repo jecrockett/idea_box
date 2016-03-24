@@ -28,7 +28,7 @@ $(document).ready(function(){
       "</p></div><div class='actions'>" +
       "<a href='#' id='increase-quality'><i class='fa fa-thumbs-up'></i></a>" +
       "<a href='#' id='decrease-quality'><i class='fa fa-thumbs-down'></i></a>" +
-      "<a href='#' id='" + idea.id + "' class='delete'>Delete</a></div></div>"
+      "<a href='#' id='" + idea.id + "' class='delete'><i class='fa fa-trash'</i></a></div></div>"
     );
   };
 
