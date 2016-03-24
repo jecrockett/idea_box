@@ -102,6 +102,65 @@ $(document).ready(function(){
     })
   };
 
+  function decreaseQuality(id, idea, newNum, newWord){
+    $.ajax({
+      type: 'PUT',
+      url: '/api/v1/ideas/' + id,
+      data: {
+        idea: {
+          quality: newNum
+        }
+      },
+      success: function(response) {
+        console.log('Quality updated.')
+        idea.find('.quality').html("Quality: " + newWord);
+      },
+      error: function(xhr) {
+        console.log(xhr.responseText)
+      }
+    })
+  }
+
+  function updateQuality(id, idea, newNum, newWord){
+    $.ajax({
+      type: 'PUT',
+      url: '/api/v1/ideas/' + id,
+      data: {
+        idea: {
+          quality: newNum
+        }
+      },
+      success: function(response) {
+        console.log('Quality updated.')
+        idea.find('.quality').html("Quality: " + newWord);
+      },
+      error: function(xhr) {
+        console.log(xhr.responseText)
+      }
+    })
+  }
+
+  function updateProperty(form, element, id){
+    var newValue = $(form).val();
+
+    $.ajax({
+      type: 'PUT',
+      url: 'api/v1/ideas/' + id,
+      data: {
+        idea: {
+          updateField: newValue
+        }
+      },
+      success: function(response){
+        console.log('Title updated.');
+        element.html('Title: ' + newValue);
+      },
+      error: function(xhr) {
+        console.log(xhr.responseText);
+      }
+    })
+  }
+
   $('#save-idea-btn').click(function(){
     var title = $('#new-idea-title').val();
     var body = $('#new-idea-body').val();
@@ -116,127 +175,49 @@ $(document).ready(function(){
     deleteIdea(id);
   });
 
-
-  $('#ideas-container').on('click', 'a#increase-quality', function(e){
-    var increasedQualityKey = { Genius: 3, Plausible: 3, Swill: 2 }
-    var qualityKey = { 3: 'Genius', 2: 'Plausible', 1: 'Swill' }
-    var idea = $(this).closest('.idea');
-    var id = idea.attr('id').replace('idea-', '');
-    var oldQualityWord = idea.find('.quality').text().replace('Quality: ', '');
-    var newQualityNum = increasedQualityKey[oldQualityWord]
-    var newQualityWord = qualityKey[newQualityNum]
-    increaseQuality(id, idea, newQualityNum, newQualityWord);
-  });
-
-  $('#ideas-container').on('click', 'a#decrease-quality', function(e){
-    var idea = $(this).closest('.idea');
-    var id = idea.attr('id').replace('idea-', '');
-    var oldQualityWord = idea.find('.quality').text().replace('Quality: ', '');
-    var decreasedQualityKey = { Genius: 2, Plausible: 1, Swill: 1 }
-    var qualityKey = { 3: 'Genius', 2: 'Plausible', 1: 'Swill' }
-    var newQualityWord = qualityKey[decreasedQualityKey[oldQualityWord]]
-
-    $.ajax({
-      type: 'PUT',
-      url: '/api/v1/ideas/' + id,
-      data: {
-        idea: {
-          quality: decreasedQualityKey[oldQualityWord]
-        }
-      },
-      success: function(response) {
-        console.log('Quality updated.')
-        idea.find('.quality').html("Quality: " + newQualityWord);
-      },
-      error: function(xhr) {
-        console.log(xhr.responseText)
-      }
-    })
-  });
-
-  $('#ideas-container').on('click', 'p.title', function(e){
-    // save the clicked element
+  $('#ideas-container').on('click', 'a#increase-quality, a#decrease-quality', function(e){
     var element = $(this);
-    // save which idea is being updated...necessary or not?
+    var qualityKey = { 3: 'Genius', 2: 'Plausible', 1: 'Swill' }
+    var increasedQualityKey = { Genius: 3, Plausible: 3, Swill: 2 }
+    var decreasedQualityKey = { Genius: 2, Plausible: 1, Swill: 1 }
+    var idea = element.closest('.idea');
+    var id = idea.attr('id').replace('idea-', '');
+    var oldQualityWord = idea.find('.quality').text().replace('Quality: ', '');
+
+    if (element.is('#increase-quality')) {
+      var newQualityNum = increasedQualityKey[oldQualityWord]
+    };
+    if (element.is('#decrease-quality')) {
+      var newQualityNum = decreasedQualityKey[oldQualityWord];
+    };
+
+    var newQualityWord = qualityKey[newQualityNum];
+    updateQuality(id, idea, newQualityNum, newQualityWord);
+  });
+
+  $('#ideas-container').on('click', 'p.title, p.body', function(e){
+    var element = $(this);
     var idea = element.closest('.idea')
     var id = idea.attr('id').replace('idea-', '');
-    // save the clicked element's contents
-    var ideaTitle = element.text().replace('Title: ', '');
-    // save the temporary input to a variable
-    var form = $("<input name='temp' type='text' value='" + ideaTitle + "'/>")
-    // hide the clicked element and insert input field after with element value
-    element.hide().after(form);
-    // focus automatically on that input field
-    form.focus();
-    // when the focus comes off it, save the value
-    form.blur(function(){
-      var newTitle = $(this).val();
-      // send ajax update with new value
-      $.ajax({
-        type: 'PUT',
-        url: 'api/v1/ideas/' + id,
-        data: {
-          idea: {
-            title: newTitle
-          }
-        },
-        success: function(response){
-          console.log('Title updated.');
-          element.html('Title: ' + newTitle);
-        },
-        error: function(xhr) {
-          console.log(xhr.responseText);
-        }
-      })
-      // get ride of the input field
-      $(this).remove();
-      // re-show the hidden element
-      element.show();
-    })
-    // allow user to enable blur by hitting return key
-    form.keydown(function(e) { if (e.which == 13) { form.blur(); }});
-  });
 
-  $('#ideas-container').on('click', 'p.body', function(e){
-    // save the clicked element
-    var element = $(this);
-    // save which idea is being updated...necessary or not?
-    var id = element.closest('.idea').attr('id').replace('idea-', '');
-    // save the clicked element's contents
-    var ideaBody = element.text().replace('Body: ', '');
-    // save the temporary input to a variable
-    var form = $("<input name='temp' type='text' value='" + ideaBody + "'/>")
-    // hide the clicked element and insert input field after with element value
+    if (element.hasClass('title')) {
+      var updateField = 'title'
+      var oldValue = element.text().replace('Title: ', '');
+    };
+    if (element.hasClass('body')){
+      var updateField = 'body'
+      var oldValue = element.text().replace('Body: ', '');
+    };
+
+    var form = $("<input name='temp' type='text' value='" + oldValue + "'/>")
+
     element.hide().after(form);
-    // focus automatically on that input field
     form.focus();
-    // when the focus comes off it, save the value
     form.blur(function(){
-      var newBody = $(this).val();
-      // send ajax update with new value
-      $.ajax({
-        type: 'PUT',
-        url: 'api/v1/ideas/' + id,
-        data: {
-          idea: {
-            body: newBody
-          }
-        },
-        success: function(response){
-          console.log('Body updated.');
-          // update the hidden element with the new body
-          element.html('Body: ' + newBody);
-        },
-        error: function(xhr) {
-          console.log(xhr.responseText);
-        }
-      })
-      // get ride of the input field
+      updateProperty(this, element, id);
       $(this).remove();
-      // re-show the hidden element
       element.show();
     })
-    // allow user to enable blur by hitting return key
     form.keydown(function(e) { if (e.which == 13) { form.blur(); }});
   });
 
