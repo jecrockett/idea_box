@@ -83,6 +83,17 @@ $(document).ready(function(){
     })
   }
 
+  function translateQuality(elem, word) {
+    if (elem.is('#increase-quality')) {
+      var increasedQualityKey = { Genius: 3, Plausible: 3, Swill: 2 }
+      return increasedQualityKey[word];
+    };
+    if (elem.is('#decrease-quality')) {
+      var decreasedQualityKey = { Genius: 2, Plausible: 1, Swill: 1 }
+      return decreasedQualityKey[word];
+    };
+  }
+
   function updateQuality(id, idea, newNum, newWord){
     $.ajax({
       type: 'PUT',
@@ -100,6 +111,17 @@ $(document).ready(function(){
         console.log(xhr.responseText)
       }
     })
+  }
+
+  function toggleInputForm(input, elem, id) {
+    elem.hide().after(input);
+    input.focus();
+    input.blur(function(){
+      updateProperty(this, elem, id);
+      $(this).remove();
+      elem.show();
+    })
+    input.keydown(function(e) { if (e.which == 13) { input.blur(); }});
   }
 
   function updateProperty(form, element, id){
@@ -123,6 +145,25 @@ $(document).ready(function(){
     })
   }
 
+  function sortIdeas(ideas, first){
+    if (!first.hasClass('sorted')) {
+      ideas.each(function(index, idea){
+        $(idea).addClass('sorted');
+      });
+
+      return ideas.sort(function(a, b){
+        var first =  $(a).find('p.quality').text().replace('Quality: ', '');
+        var second = $(b).find('p.quality').text().replace('Quality: ', '');
+        var qualityKey = {"Genius":    3,
+                          "Plausible": 2,
+                          "Swill":     1}
+        return qualityKey[second] - qualityKey[first];
+      });
+    } else {
+      return ideas.toArray().reverse()
+    };
+  }
+
   $('#save-idea-btn').click(function(){
     var title = $('#new-idea-title').val();
     var body = $('#new-idea-body').val();
@@ -140,19 +181,10 @@ $(document).ready(function(){
   $('#ideas-container').on('click', 'a#increase-quality, a#decrease-quality', function(e){
     var element = $(this);
     var qualityKey = { 3: 'Genius', 2: 'Plausible', 1: 'Swill' }
-    var increasedQualityKey = { Genius: 3, Plausible: 3, Swill: 2 }
-    var decreasedQualityKey = { Genius: 2, Plausible: 1, Swill: 1 }
     var idea = element.closest('.idea');
     var id = idea.attr('id').replace('idea-', '');
     var oldQualityWord = idea.find('.quality').text().replace('Quality: ', '');
-
-    if (element.is('#increase-quality')) {
-      var newQualityNum = increasedQualityKey[oldQualityWord]
-    };
-    if (element.is('#decrease-quality')) {
-      var newQualityNum = decreasedQualityKey[oldQualityWord];
-    };
-
+    var newQualityNum = translateQuality(element, oldQualityWord)
     var newQualityWord = qualityKey[newQualityNum];
     updateQuality(id, idea, newQualityNum, newQualityWord);
   });
@@ -161,7 +193,6 @@ $(document).ready(function(){
     var element = $(this);
     var idea = element.closest('.idea')
     var id = idea.attr('id').replace('idea-', '');
-
     if (element.hasClass('title')) {
       var updateField = 'title'
       var oldValue = element.text().replace('Title: ', '');
@@ -170,24 +201,15 @@ $(document).ready(function(){
       var updateField = 'body'
       var oldValue = element.text().replace('Body: ', '');
     };
-
     var form = $("<input name='temp' type='text' value='" + oldValue + "'/>")
-
-    element.hide().after(form);
-    form.focus();
-    form.blur(function(){
-      updateProperty(this, element, id);
-      $(this).remove();
-      element.show();
-    })
-    form.keydown(function(e) { if (e.which == 13) { form.blur(); }});
+    toggleInputForm(form, element, id)
   });
 
   $('#search-form').on('change, keyup', function(e){
     var searchTerm = $(this).val().toLowerCase();
     var $ideas = $('.idea')
-    $ideas.show();
 
+    $ideas.show();
     for (var i = 0; i < $ideas.length; i++) {
       var ideaText = $($ideas[i]).find('p.title, p.body').text().replace('Title: ', '').replace('Body:', '').toLowerCase();
       if (ideaText.indexOf(searchTerm) === -1) {
@@ -199,26 +221,10 @@ $(document).ready(function(){
   $('#quality-filter').click(function(){
     var $ideas = $('.idea')
     var $firstIdea = $($ideas[0])
-
-    if (!$firstIdea.hasClass('sorted')) {
-      $ideas.sort(function(a, b){
-        var first =  $(a).find('p.quality').text().replace('Quality: ', '');
-        var second = $(b).find('p.quality').text().replace('Quality: ', '');
-        var qualityKey = {"Genius":    3,
-                          "Plausible": 2,
-                          "Swill":     1}
-        return qualityKey[second] - qualityKey[first];
-      });
-
-      $ideas.each(function(index, idea){
-        $(idea).addClass('sorted');
-      });
-    } else {
-      $ideas = $ideas.toArray().reverse()
-    };
+    var sortedIdeas = sortIdeas($ideas, $firstIdea)
 
     $('#ideas-container').empty();
-    $($ideas).each(function(index, idea){
+    $(sortedIdeas).each(function(index, idea){
       $('#ideas-container').append(idea)
     });
   });
