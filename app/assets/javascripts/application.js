@@ -26,8 +26,8 @@ $(document).ready(function(){
       "</p><p class='body'>Body: " +
       idea.truncated_body +
       "</p></div><div class='actions'>" +
-      "<a href='#' id='increase-quality'>Increase</a>" +
-      "<a href='#' id='decrease-quality'>Decrease</a>" +
+      "<a href='#' id='increase-quality'><i class='fa fa-thumbs-up'></i></a>" +
+      "<a href='#' id='decrease-quality'><i class='fa fa-thumbs-down'></i></a>" +
       "<a href='#' id='" + idea.id + "' class='delete'>Delete</a></div></div>"
     );
   };
