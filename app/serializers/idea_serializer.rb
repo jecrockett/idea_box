@@ -1,5 +1,5 @@
 class IdeaSerializer < ActiveModel::Serializer
-  attributes :id, :title, :truncated_body, :quality_in_words
+  attributes :id, :title, :body, :truncated_body, :quality_in_words
 
   def quality_in_words
     case object.quality

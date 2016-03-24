@@ -16,6 +16,22 @@
 
 $(document).ready(function(){
 
+  String.prototype.truncate = function(){
+    var truncated = this.slice(0, 101);
+    if (truncated.length < 101) {
+      return truncated
+    } else {
+      for (var i = truncated.length; truncated[i] != " "; i--) {
+        var trunc = truncated.slice(0, i)
+      }
+      return trunc + '...'
+    }
+  }
+
+  String.prototype.capitalize = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+  }
+
   var renderIdea = function(idea){
     $('#ideas-container').prepend(
       "<div id='idea-" + idea.id + "' class='idea'>" +
@@ -25,6 +41,8 @@ $(document).ready(function(){
       idea.quality_in_words +
       "</p><p class='body'>Body: " +
       idea.truncated_body +
+      "</p><p class='hidden full-body'>" +
+      idea.body +
       "</p></div><div class='actions'>" +
       "<a href='#' id='increase-quality'><i class='fa fa-thumbs-up'></i></a>" +
       "<a href='#' id='decrease-quality'><i class='fa fa-thumbs-down'></i></a>" +
@@ -113,18 +131,18 @@ $(document).ready(function(){
     })
   }
 
-  function toggleInputForm(input, elem, id) {
+  function toggleInputFormAndElement(input, elem, updateField, id) {
     elem.hide().after(input);
     input.focus();
     input.blur(function(){
-      updateProperty(this, elem, id);
+      updateProperty(this, elem, updateField, id);
       $(this).remove();
       elem.show();
     })
     input.keydown(function(e) { if (e.which == 13) { input.blur(); }});
   }
 
-  function updateProperty(form, element, id){
+  function updateProperty(form, element, updateField, id){
     var newValue = $(form).val();
 
     $.ajax({
@@ -136,8 +154,9 @@ $(document).ready(function(){
         }
       },
       success: function(response){
-        console.log('Title updated.');
-        element.html('Title: ' + newValue);
+        console.log(updateField.capitalize() + ' updated.');
+        element.html(updateField.capitalize() + ": " + newValue.truncate());
+        element.siblings('.hidden').html(newValue);
       },
       error: function(xhr) {
         console.log(xhr.responseText);
@@ -199,10 +218,10 @@ $(document).ready(function(){
     };
     if (element.hasClass('body')){
       var updateField = 'body'
-      var oldValue = element.text().replace('Body: ', '');
+      var oldValue = element.siblings('.hidden').text();
     };
     var form = $("<input name='temp' type='text' value='" + oldValue + "'/>")
-    toggleInputForm(form, element, id)
+    toggleInputFormAndElement(form, element, updateField, id)
   });
 
   $('#search-form').on('change, keyup', function(e){
