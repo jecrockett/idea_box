@@ -7,7 +7,7 @@ RSpec.feature "User can delete an idea", js: true, type: :feature do
     idea_count_before = Idea.all.count
 
     within '#idea-1' do
-      click_on "Delete"
+      click_on "1"
     end
 
     expect(page).to_not have_css('#idea-1')
