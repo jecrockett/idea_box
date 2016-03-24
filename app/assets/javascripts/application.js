@@ -16,9 +16,21 @@
 
 $(document).ready(function(){
 
-  //$.getJSON('/ideas').then(function(){
-
-  // });
+  var renderIdea = function(idea){
+    $('#ideas-container').prepend(
+      "<div id='idea-" + idea.id + "' class='idea'>" +
+      "<div class='contents'><p class='title'>Title: " +
+      idea.title +
+      "</p><p class='quality'>Quality: " +
+      idea.quality_in_words +
+      "</p><p class='body'>Body: " +
+      idea.truncated_body +
+      "</p></div><div class='actions'>" +
+      "<a href='#' id='increase-quality'>Increase</a>" +
+      "<a href='#' id='decrease-quality'>Decrease</a>" +
+      "<a href='#' id='" + idea.id + "' class='delete'>Delete</a></div></div>"
+    );
+  };
 
   var renderIdeas = function(){
     $.ajax({
@@ -38,35 +50,14 @@ $(document).ready(function(){
 
   renderIdeas();
 
-  var renderIdea = function(idea){
-    $('#ideas-container').prepend(
-      "<div id='idea-" + idea.id + "' class='idea'>" +
-      "<div class='contents'><p class='title'>Title: " +
-      idea.title +
-      "</p><p class='quality'>Quality: " +
-      idea.quality_in_words +
-      "</p><p class='body'>Body: " +
-      idea.truncated_body +
-      "</p></div><div class='actions'>" +
-      "<a href='#' id='increase-quality'>Increase</a>" +
-      "<a href='#' id='decrease-quality'>Decrease</a>" +
-      "<a href='#' id='" + idea.id + "' class='delete'>Delete</a></div></div>"
-    );
-  };
-
-  $('#save-idea-btn').click(function(){
-    var title = $('#new-idea-title').val();
-    var body = $('#new-idea-body').val();
-    $('#new-idea-title').val('');
-    $('#new-idea-body').val('');
-
+  function saveIdea(ideaTitle, ideaBody){
     $.ajax({
       type: 'POST',
       url: '/api/v1/ideas',
       data: {
         idea: {
-          title: title,
-          body: body
+          title: ideaTitle,
+          body: ideaBody
         }
       },
       success: function(response){
@@ -77,15 +68,12 @@ $(document).ready(function(){
         console.log(xhr.responseText);
       }
     })
-  });
+  };
 
-  $('#ideas-container').on('click', 'a.delete', function(e){
-    var id = $(this).closest('.idea').attr('id').replace('idea-', '');
-    $(this).parents().eq(1).hide();
-
+  function deleteIdea(ideaId){
     $.ajax({
       type: 'DELETE',
-      url: '/api/v1/ideas/' + id,
+      url: '/api/v1/ideas/' + ideaId,
       success: function(response){
         console.log("Idea deleted.");
       },
@@ -93,6 +81,20 @@ $(document).ready(function(){
         console.log(xhr.responseText);
       }
     })
+  }
+
+  $('#save-idea-btn').click(function(){
+    var title = $('#new-idea-title').val();
+    var body = $('#new-idea-body').val();
+    $('#new-idea-title').val('');
+    $('#new-idea-body').val('');
+    saveIdea(title, body);
+  });
+
+  $('#ideas-container').on('click', 'a.delete', function(e){
+    var id = $(this).closest('.idea').attr('id').replace('idea-', '');
+    $(this).parents().eq(1).hide();
+    deleteIdea(id);
   });
 
 
@@ -238,6 +240,7 @@ $(document).ready(function(){
     var searchTerm = $(this).val().toLowerCase();
     var $ideas = $('.idea')
     $ideas.show();
+
     for (var i = 0; i < $ideas.length; i++) {
       var ideaText = $($ideas[i]).find('p.title, p.body').text().replace('Title: ', '').replace('Body:', '').toLowerCase();
       if (ideaText.indexOf(searchTerm) === -1) {
@@ -248,9 +251,9 @@ $(document).ready(function(){
 
   $('#quality-filter').click(function(){
     var $ideas = $('.idea')
-    var $first_idea = $($ideas[0])
+    var $firstIdea = $($ideas[0])
 
-    if (!$first_idea.hasClass('sorted')) {
+    if (!$firstIdea.hasClass('sorted')) {
       $ideas.sort(function(a, b){
         var first =  $(a).find('p.quality').text().replace('Quality: ', '');
         var second = $(b).find('p.quality').text().replace('Quality: ', '');
@@ -264,7 +267,6 @@ $(document).ready(function(){
         $(idea).addClass('sorted');
       });
     } else {
-
       $ideas = $ideas.toArray().reverse()
     };
 
