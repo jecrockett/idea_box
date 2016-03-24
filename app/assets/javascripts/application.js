@@ -83,6 +83,25 @@ $(document).ready(function(){
     })
   }
 
+  function increaseQuality(id, idea, newNum, newWord){
+    $.ajax({
+      type: 'PUT',
+      url: '/api/v1/ideas/' + id,
+      data: {
+        idea: {
+          quality: newNum
+        }
+      },
+      success: function(response) {
+        console.log('Quality updated.')
+        idea.find('.quality').html("Quality: " + newWord);
+      },
+      error: function(xhr) {
+        console.log(xhr.responseText)
+      }
+    })
+  };
+
   $('#save-idea-btn').click(function(){
     var title = $('#new-idea-title').val();
     var body = $('#new-idea-body').val();
@@ -99,29 +118,14 @@ $(document).ready(function(){
 
 
   $('#ideas-container').on('click', 'a#increase-quality', function(e){
+    var increasedQualityKey = { Genius: 3, Plausible: 3, Swill: 2 }
+    var qualityKey = { 3: 'Genius', 2: 'Plausible', 1: 'Swill' }
     var idea = $(this).closest('.idea');
     var id = idea.attr('id').replace('idea-', '');
     var oldQualityWord = idea.find('.quality').text().replace('Quality: ', '');
-    var increasedQualityKey = { Genius: 3, Plausible: 3, Swill: 2 }
-    var qualityKey = { 3: 'Genius', 2: 'Plausible', 1: 'Swill' }
-    var newQualityWord = qualityKey[increasedQualityKey[oldQualityWord]]
-
-    $.ajax({
-      type: 'PUT',
-      url: '/api/v1/ideas/' + id,
-      data: {
-        idea: {
-          quality: increasedQualityKey[oldQualityWord]
-        }
-      },
-      success: function(response) {
-        console.log('Quality updated.')
-        idea.find('.quality').html("Quality: " + newQualityWord);
-      },
-      error: function(xhr) {
-        console.log(xhr.responseText)
-      }
-    })
+    var newQualityNum = increasedQualityKey[oldQualityWord]
+    var newQualityWord = qualityKey[newQualityNum]
+    increaseQuality(id, idea, newQualityNum, newQualityWord);
   });
 
   $('#ideas-container').on('click', 'a#decrease-quality', function(e){
